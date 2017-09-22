@@ -3,14 +3,11 @@
 PUBLIC_TESTS:=$(wildcard public? public??)
 RELEASE_TESTS:=$(wildcard release? release??)
 
-all:	copy chmod clean
+all:	chmod clean
 
-
-copy:
-	copy ../controller.rb ./controller
 
 chmod:
 	chmod a+x $(PUBLIC_TESTS) $(RELEASE_TESTS) controller
 
 clean:
-	rm -f console_n* *~ *.dt
+	rm -f console_n* *~ *.dt-out

@@ -1,32 +1,49 @@
 # /usr/bin/env sh
 
-echo "RUNNING CANONICAL"
+pkill -f node.rb
+#cp ./p3-zip/controller.rb ./"$1"
+#cp ./p3-zip/nodes.txt ./"$1"
+#cp ./p3-zip/config ./"$1"
 
-rm -f ./console_n* > /dev/null
-rm -f ./n1_t0_d1_table.dt-out > /dev/null
-rm -f ./n2_t0_d1_table.dt-out > /dev/null			
-
-
-ruby ./gen_config.rb
-
+rm -f ./console_n*
 
 ./controller nodes.txt config < public02.in
 
-#MAKE SURE THESE FILES EXIST
-touch ./console_n1
-touch ./console_n2
-touch ./console_n3
-touch ./console_n4
+touch ./n1_t1_d1_table.dt
+touch ./n1_t1_d2_table.dt
+touch ./n2_t1_d2_table.dt
 
-RES1=($(grep '[0-3] n4 [0-9]' console_n1 | wc))
-lines=${RES1[0]}
+DIFF1=$(diff -b -B ./can_n1_t1_d1_table.out ./n1_t1_d1_table.dt)
+DIFF2=$(diff -b -B ./can_n1_t1_d2_table.out ./n1_t1_d2_table.dt)
+DIFF3=$(diff -b -B ./can_n2_t1_d2_table.out ./n2_t1_d2_table.dt)
 
-if [ $lines != "4" ]
+if [ "$DIFF1" != "" ]
 then
-    echo "DID NOT FIND MESSAGE IN NODE CONSOLE"
+    echo "Node 1 / Dump 1 Routing table mismatch"
+    echo "$DIFF1"
     exit 1
 else
     echo "+Passed (1)"
+fi
+
+
+if [ "$DIFF2" != "" ]
+then
+    echo "Node 1 / Dump 2 Routing table mismatch"
+    echo "$DIFF2"
+    exit 1
+else
+    echo "+Passed (2)"
+fi
+
+
+if [ "$DIFF3" != "" ]
+then
+    echo "Node 2 / Dump 2 Routing table mismatch"
+    echo "$DIFF3"
+    exit 1
+else
+    echo "+Passed (3)"
 fi
 
 exit 0

@@ -1,32 +1,36 @@
 # /usr/bin/env sh
 
-echo "RUNNING CANONICAL"
-rm -f ./console_n* > /dev/null
-rm -f ./n1_t0_d1_table.dt-out > /dev/null
-rm -f ./n2_t0_d1_table.dt-out > /dev/null			
-
-ruby ./gen_config.rb
-
+rm -f ./console_n*
+rm -f ./n1_t0_d1_table.dt-out
+rm -f ./n2_t0_d1_table.dt-out			
 
 ./controller nodes.txt config < public01.in
 
+touch ./n1_t0_d1_table.dt
+touch ./n2_t0_d1_table.dt
 
-#MAKE SURE THESE EXIST
-touch ./console_n1
-touch ./console_n2
-touch ./console_n3
-touch ./console_n4
+DIFF1=$(diff -B -b ./can_n1_t0_d1_table.out ./n1_t0_d1_table.dt)
+DIFF2=$(diff -B -b ./can_n2_t0_d1_table.out ./n2_t0_d1_table.dt)
 
-RES1=($(grep 'SNDMSG: n1 --> "Hello World"' console_n4 | wc))
-lines=${RES1[0]}
-
-if [ $lines != "1" ]
+if [ "$DIFF1" != "" ]
 then
-    echo "DID NOT FIND MESSAGE IN NODE CONSOLE"
+    echo "Node 1 Routing table mismatch"
+    echo "$DIFF1"
     exit 1
 else
     echo "+Passed (1)"
 fi
 
 
+if [ "$DIFF2" != "" ]
+then
+    echo "Node 2 Routing table mismatch"
+    echo "$DIFF2"
+    exit 1
+else
+    echo "+Passed (2)"
+fi
+
 exit 0
+
+
