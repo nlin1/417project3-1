@@ -1,6 +1,4 @@
-#!/usr/bin/env ruby
 
-require 'timeout'
 require 'open3'
 
 
@@ -29,25 +27,20 @@ end
 # give all nodes the signal to terminate and then close the controller
 def shutdown()
 
-  begin 
-    Timeout.timeout(5) do
-      $nodes.keys.each{ |nname|
-	$nodes[nname]["STDIN"].puts "SHUTDOWN"
-      }
-      
-      sleep(2)
+	$nodes.keys.each{ |nname|
+		$nodes[nname]["STDIN"].puts "SHUTDOWN"
+	}
+	
+	sleep(2)
 
-      $nodes.keys.each{ |nname|
-	val = $nodes[nname]["WAIT"].value
-	if(val != 0)
-	  exit(-1)
-	end
-      }
-    end
-  rescue Timeout::Error
-    puts "ERROR: Failed to shutdown"
-  end
-  exit(0)
+	$nodes.keys.each{ |nname|
+		val = $nodes[nname]["WAIT"].value
+		if(val != 0)
+			exit(-1)
+		end
+	}
+
+	exit(0)
 end
 
 
@@ -83,37 +76,31 @@ def parse_command(arr)
 end
 
 
-begin
-  Timeout.timeout(60) do
-    nodes_file = ARGV[0]
-    config_file = ARGV[1]
-    
-    fHandle = File.open(nodes_file)
-    while(line = fHandle.gets())
-      arr = line.chomp().split(',')
-      
-      node_name = arr[0]
-      node_port = arr[1]
-      
-      cmd = "ruby ./node.rb #{node_name} #{node_port} #{nodes_file} #{config_file} > console_#{node_name}"
-      
-      first_stdin, wait_thr = Open3.pipeline_w(cmd)
-      $nodes[node_name] = {}
-      $nodes[node_name]["PORT"] = node_port
-      $nodes[node_name]["STDIN"] = first_stdin
-      $nodes[node_name]["WAIT"] = wait_thr[0]
-      
-    end
-    
-  
-    
-    while(line = STDIN.gets())
-      parse_command(line.strip.split(' '))
-    end
-  end
-rescue Timeout::Error
-  puts "ERROR: Controller Timed out!"
+nodes_file = ARGV[0]
+config_file = "./config.txt"
+
+fHandle = File.open(nodes_file)
+while(line = fHandle.gets())
+	arr = line.chomp().split(',')
+
+	node_name = arr[0]
+	node_port = arr[1]
+
+	cmd = "ruby ./node.rb #{node_name} #{node_port} #{nodes_file} #{config_file} > console_#{node_name}"
+
+	first_stdin, wait_thr = Open3.pipeline_w(cmd)
+	$nodes[node_name] = {}
+	$nodes[node_name]["PORT"] = node_port
+	$nodes[node_name]["STDIN"] = first_stdin
+	$nodes[node_name]["WAIT"] = wait_thr[0]
+		
 end
+
+
+while(line = STDIN.gets())
+	parse_command(line.strip.split(' '))
+end
+
 
 
 

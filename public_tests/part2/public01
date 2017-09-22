@@ -4,15 +4,35 @@ rm -f ./console_n*
 rm -f ./n1_t0_d1_table.dt-out
 rm -f ./n2_t0_d1_table.dt-out			
 
-ruby ../gen_config 4
+ruby ../gen_config.rb 4
 
 ./controller nodes.txt config < public01.in
 
-touch ./n1_t0_d1_table.dt
-touch ./n2_t0_d1_table.dt
+#echo "Console N1: "
+#cat ./console_n1
 
-DIFF1=$(diff -B -b ./can_n1_t0_d1_table.out ./n1_t0_d1_table.dt)
-DIFF2=$(diff -B -b ./can_n2_t0_d1_table.out ./n2_t0_d1_table.dt)
+#echo "Console N4: "
+#cat ./console_n4
+
+#echo "Console N4: "
+#cat ./console_n4
+
+#echo "Console N4: "
+#cat ./console_n4
+
+
+#echo "Table N1: "
+#cat ./n1_t0_d1_table.dt
+
+
+#echo "Table N2: "
+#cat ./n2_t0_d1_table.dt
+
+touch ./n1_t0_d1_table.dt
+touch ./n2_t0_d1_table.dt				
+
+DIFF1=$(diff ./can_n1_t0_d1_table.out ./n1_t0_d1_table.dt)
+DIFF2=$(diff ./can_n2_t0_d1_table.out ./n2_t0_d1_table.dt)
 
 if [ "$DIFF1" != "" ]
 then
