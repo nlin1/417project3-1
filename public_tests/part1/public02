@@ -1,0 +1,32 @@
+# /usr/bin/env sh
+
+echo "RUNNING CANONICAL"
+
+rm -f ./console_n* > /dev/null
+rm -f ./n1_t0_d1_table.dt-out > /dev/null
+rm -f ./n2_t0_d1_table.dt-out > /dev/null			
+
+
+ruby ./gen_config.rb
+
+
+./controller nodes.txt config < public02.in
+
+#MAKE SURE THESE FILES EXIST
+touch ./console_n1
+touch ./console_n2
+touch ./console_n3
+touch ./console_n4
+
+RES1=($(grep '[0-3] n4 [0-9]' console_n1 | wc))
+lines=${RES1[0]}
+
+if [ $lines != "4" ]
+then
+    echo "DID NOT FIND MESSAGE IN NODE CONSOLE"
+    exit 1
+else
+    echo "+Passed (1)"
+fi
+
+exit 0

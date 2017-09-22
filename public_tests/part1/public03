@@ -1,0 +1,72 @@
+# /usr/bin/env sh
+
+echo "RUNNING CANONICAL"
+rm -f ./console_n* > /dev/null
+rm -f ./n1_t0_d1_table.dt-out > /dev/null
+rm -f ./n2_t0_d1_table.dt-out > /dev/null			
+
+
+ruby ./gen_config.rb
+
+./controller nodes.txt config < public03.in
+
+#MAKE SURE THESE FILES EXIST
+touch ./console_n1
+touch ./console_n2
+touch ./console_n3
+touch ./console_n4
+
+#LOOK FOR LINE 1
+RES1=($(grep '0 n1 [0-9]' console_n1 | wc))
+lines1=${RES1[0]}
+
+#LOOK FOR LINE 2
+RES2=($(grep '1 n2 [0-9]' console_n1 | wc))
+lines2=${RES1[0]}
+
+#LOOK FOR LINE 3
+RES3=($(grep '2 n3 [0-9]' console_n1 | wc))
+lines3=${RES1[0]}
+
+#LOOK FOR LINE 4
+RES4=($(grep '3 n4 [0-9]' console_n1 | wc))
+lines4=${RES1[0]}
+
+
+
+
+if [ $lines1 != "1" ]
+then
+    echo "DID NOT FIND MESSAGE IN NODE CONSOLE"
+    exit 1
+else
+    echo "+Passed (1)"
+fi
+
+
+if [ $lines2 != "1" ]
+then
+    echo "DID NOT FIND MESSAGE IN NODE CONSOLE"
+    exit 1
+else
+    echo "+Passed (2)"
+fi
+
+if [ $lines3 != "1" ]
+then
+    echo "DID NOT FIND MESSAGE IN NODE CONSOLE"
+    exit 1
+else
+    echo "+Passed (3)"
+fi
+
+if [ $lines4 != "1" ]
+then
+    echo "DID NOT FIND MESSAGE IN NODE CONSOLE"
+    exit 1
+else
+    echo "+Passed (4)"
+fi
+
+
+exit 0

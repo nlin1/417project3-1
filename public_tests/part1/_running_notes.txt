@@ -1,0 +1,2 @@
+1) All supplementary files must begin with node_ and end with .rb
+2) Student code and entry point must be in node.rb
