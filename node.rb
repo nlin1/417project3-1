@@ -3,7 +3,7 @@ $hostname = nil
 
 
 
-# --------------------- Part 0 --------------------- # 
+# --------------------- Part 1 --------------------- # 
 
 def edgeb(cmd)
 	STDOUT.puts "EDGE: not implemented"
@@ -20,7 +20,7 @@ end
 
 
 
-# --------------------- Part 1 --------------------- # 
+# --------------------- Part 2 --------------------- # 
 def edged(cmd)
 	STDOUT.puts "EDGED: not implemented"
 end
@@ -34,7 +34,7 @@ def status()
 end
 
 
-# --------------------- Part 2 --------------------- # 
+# --------------------- Part 3 --------------------- # 
 def sendmsg(cmd)
 	STDOUT.puts "SENDMSG: not implemented"
 end
@@ -47,11 +47,13 @@ def traceroute(cmd)
 	STDOUT.puts "TRACEROUTE: not implemented"
 end
 
+# --------------------- Part 4 --------------------- # 
+
+
 def ftp(cmd)
 	STDOUT.puts "FTP: not implemented"
 end
 
-# --------------------- Part 3 --------------------- # 
 def circuit(cmd)
 	STDOUT.puts "CIRCUIT: not implemented"
 end
@@ -77,6 +79,8 @@ def main()
 		when "SENDMSG"; sendmsg(args)
 		when "PING"; ping(args)
 		when "TRACEROUTE"; traceroute(args)
+		when "FTP"; ftp(args);
+		when "CIRCUIT"; circuit(args);
 		else STDERR.puts "ERROR: INVALID COMMAND \"#{cmd}\""
 		end
 	end
@@ -97,8 +101,3 @@ def setup(hostname, port, nodes, config)
 end
 
 setup(ARGV[0], ARGV[1], ARGV[2], ARGV[3])
-
-
-
-
-
