@@ -1,12 +1,26 @@
+require 'socket'
+require 'csv'
+
 $port = nil
 $hostname = nil
+$socketToNode = {} #Hashmap to index node by socket
+$nodeToSocket = {}
 
+
+#dst -> nexthop, dist
+routing_table = Hash.new
 
 
 # --------------------- Part 1 --------------------- # 
 
 def edgeb(cmd)
-	STDOUT.puts "EDGE: not implemented"
+	if(routing_table.has_key?(cmd[2]) && routing_table[cmd[2]][1] == 1)
+		return nil
+	else
+		routing_table[cmd[2]] = [cmd[2], 1]
+	end
+	sock = TCPSocket.open()
+
 end
 
 def dumptable(cmd)
@@ -14,7 +28,9 @@ def dumptable(cmd)
 end
 
 def shutdown(cmd)
-	STDOUT.puts "SHUTDOWN: not implemented"
+	STDOUT.flush
+	STDERR.flush
+	server.close
 	exit(0)
 end
 
@@ -70,11 +86,11 @@ def main()
 		cmd = arr[0]
 		args = arr[1..-1]
 		case cmd
-		when "EDGEB"; edgeb(args)
+		when "EDGEB"; edgeb(args) #part 0
 		when "EDGED"; edged(args)
-		when "EDGEU”; edgeU(args)
-		when "DUMPTABLE"; dumptable(args)
-		when "SHUTDOWN"; shutdown(args)
+		when "EDGEU"; edgeU(args)
+		when "DUMPTABLE"; dumptable(args) #part 0
+		when "SHUTDOWN"; shutdown(args)	#part0
 		when "STATUS"; status()
 		when "SENDMSG"; sendmsg(args)
 		when "PING"; ping(args)
@@ -92,9 +108,11 @@ def setup(hostname, port, nodes, config)
 	$port = port
 
 	#set up ports, server, buffers
-	
-	$socketToNode = {} #Hashmap to index node by socket
-	
+
+	server = TCPServer.open(port)
+
+	$socketToNode[server] = hostname;
+	$nodeToSocket[hostname] = server;
 
 	main()
 
